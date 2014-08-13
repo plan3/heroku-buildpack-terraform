@@ -11,12 +11,18 @@ if [ ! -s $1/.packer_url ]; then
     exit 0
 fi
 
+$UNZIP_COMMAND="unzip"
+
+if [ $STACK == "cedar" ]
+  $UNZIP_COMMAND="jar xf"
+fi
+
 cd $1
 
 while read url; do
   if [ -n "$url" ]; then
     echo Vendoring $url | indent
     curl -L --silent $url > $1/bin/packer.zip
-    cd $1/bin && jar xf packer.zip && rm packer.zip
+    cd $1/bin && $UNZIP_COMMAND packer.zip && rm packer.zip
   fi
 done < .packer_url
