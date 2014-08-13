@@ -11,10 +11,10 @@ if [ ! -s $1/.packer_url ]; then
     exit 0
 fi
 
-$UNZIP_COMMAND="unzip"
+UNZIP_COMMAND="unzip"
 
 if [ $STACK == "cedar" ]
-  $UNZIP_COMMAND="jar xf"
+  UNZIP_COMMAND="jar xf"
 fi
 
 cd $1
