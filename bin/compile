@@ -13,7 +13,7 @@ fi
 
 UNZIP_COMMAND="unzip"
 
-if [ $STACK == "cedar" ]
+if [ $STACK == "cedar" ]; then
   UNZIP_COMMAND="jar xf"
 fi
 
