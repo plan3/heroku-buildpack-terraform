@@ -1,4 +1,4 @@
-heroku-buildpack-packer
-=======================
+heroku-buildpack-terraform
+==========================
 
-A buildpack to install packer on a heroku instance
+A buildpack to install terraform on a heroku instance

@@ -4,10 +4,10 @@ indent() {
     sed -u 's/^/       /'
 }
 
-echo "-----> Found a .packer_url file"
+echo "-----> Found a .terraform_url file"
 
-if [ ! -s $1/.packer_url ]; then
-    echo ".packer_url empty. Skipping." | indent
+if [ ! -s $1/.terraform_url ]; then
+    echo ".terraform_url empty. Skipping." | indent
     exit 0
 fi
 
@@ -22,7 +22,7 @@ cd $1
 while read url; do
   if [ -n "$url" ]; then
     echo Vendoring $url | indent
-    curl -L --silent $url > $1/bin/packer.zip
-    cd $1/bin && $UNZIP_COMMAND packer.zip && rm packer.zip
+    curl -L --silent $url > $1/bin/terraform.zip
+    cd $1/bin && $UNZIP_COMMAND terraform.zip && rm terraform.zip
   fi
-done < .packer_url
+done < .terraform_url
