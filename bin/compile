@@ -1,5 +1,8 @@
 #!/bin/bash
 
+BUILD_DIR="$1"
+CACHE_DIR="$2"
+
 indent() {
     sed -u 's/^/       /'
 }
@@ -19,15 +22,15 @@ fi
 
 while read url; do
   if [ -n "$url" ]; then
-    mkdir -p "$1/terraform/bin"
+    mkdir -p "$BUILD_DIR/terraform/bin"
     echo Vendoring $url | indent
-    curl -L "$url" -o "$1/terraform/bin/terraform.zip"
+    curl -L "$url" -o "$BUILD_DIR/terraform/bin/terraform.zip"
     if [ $? -ne 0 ]; then
         >&2 echo "Couldn't download $url" 
         exit 1
     fi
-    cd $1/terraform/bin && $UNZIP_COMMAND terraform.zip && rm terraform.zip
-    mkdir -p "$1/.profile.d/"
-    echo 'PATH=$PATH:$HOME/terraform/bin' > "$1/.profile.d/terraform.sh"
+    cd $BUILD_DIR/terraform/bin && $UNZIP_COMMAND terraform.zip && rm terraform.zip
+    mkdir -p "$BUILD_DIR/.profile.d/"
+    echo 'PATH=$PATH:$HOME/terraform/bin' > "$BUILD_DIR/.profile.d/terraform.sh"
   fi
-done < $1/.terraform_url
+done < $BUILD_DIR/.terraform_url
