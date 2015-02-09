@@ -22,13 +22,18 @@ fi
 
 while read url; do
   if [ -n "$url" ]; then
-    mkdir -p "$BUILD_DIR/terraform/bin"
-    echo Vendoring $url | indent
-    curl -L "$url" -o "$BUILD_DIR/terraform/bin/terraform.zip"
-    if [ $? -ne 0 ]; then
-        >&2 echo "Couldn't download $url" 
-        exit 1
-    fi
+      mkdir -p "$BUILD_DIR/terraform/bin"
+      if [ -f "$CACHE_DIR/$url" ]; then
+          echo "File form $url alread in cache dir $CACHE_DIR"
+      else
+          echo Vendoring $url | indent
+          curl -L "$url" -o "$CACHE_DIR/$url"
+          if [ $? -ne 0 ]; then
+              >&2 echo "Couldn't download $url" 
+              exit 1
+          fi
+      fi
+    cp "$CACHE_DIR/$url" "$BUILD_DIR/terraform/bin/terraform.zip"
     cd $BUILD_DIR/terraform/bin && $UNZIP_COMMAND terraform.zip && rm terraform.zip
     mkdir -p "$BUILD_DIR/.profile.d/"
     echo 'PATH=$PATH:$HOME/terraform/bin' > "$BUILD_DIR/.profile.d/terraform.sh"
