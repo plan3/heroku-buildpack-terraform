@@ -21,6 +21,7 @@ cd $1
 
 while read url; do
   if [ -n "$url" ]; then
+    mkdir -p bin
     echo Vendoring $url | indent
     curl -L "$url" -o $1/bin/terraform.zip
     if [ $? -ne 0 ]; then
