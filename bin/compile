@@ -7,6 +7,14 @@ indent() {
     sed -u 's/^/       /'
 }
 
+resolve_filename() {
+    without_http="${1#http}"
+    without_s="${without_http#s}"
+    without_slashes="${without_s#://}"
+    without_others="${without_slashes##*/}"
+    echo -n "$without_others"
+}
+
 echo "-----> Found a .terraform_url file"
 
 if [ ! -s $1/.terraform_url ]; then
@@ -22,18 +30,19 @@ fi
 
 while read url; do
   if [ -n "$url" ]; then
+      filename=`resolve_filename $url`
       mkdir -p "$BUILD_DIR/terraform/bin"
-      if [ -f "$CACHE_DIR/$url" ]; then
+      if [ -f "$CACHE_DIR/$filename" ]; then
           echo "File form $url alread in cache dir $CACHE_DIR"
       else
           echo Vendoring $url | indent
-          curl -L "$url" -o "$CACHE_DIR/$url"
+          curl -L "$url" -o "$CACHE_DIR/$filename"
           if [ $? -ne 0 ]; then
               >&2 echo "Couldn't download $url" 
               exit 1
           fi
       fi
-    cp "$CACHE_DIR/$url" "$BUILD_DIR/terraform/bin/terraform.zip"
+    cp "$CACHE_DIR/$filename" "$BUILD_DIR/terraform/bin/terraform.zip"
     cd $BUILD_DIR/terraform/bin && $UNZIP_COMMAND terraform.zip && rm terraform.zip
     mkdir -p "$BUILD_DIR/.profile.d/"
     echo 'PATH=$PATH:$HOME/terraform/bin' > "$BUILD_DIR/.profile.d/terraform.sh"
